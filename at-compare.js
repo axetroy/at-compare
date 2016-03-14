@@ -81,7 +81,7 @@
            */
           var form = $element.inheritedData("$formController");
 
-          $attrs.compare.split(';').forEach(function (v) {
+          $attrs.atCompare.split(';').forEach(function (v) {
             var match,        // 匹配到的数组
               obj = {};       // 临时哈希表
             if (!v) return;
