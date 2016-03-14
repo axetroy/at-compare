@@ -1,0 +1,16 @@
+{
+  "name": "at-compare",
+  "version": "1.0.0",
+  "description": "form directive to compare with other form input in Angular",
+  "main": "at-compare.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "angular",
+    "form",
+    "directive"
+  ],
+  "author": "axetroy",
+  "license": "MIT"
+}
