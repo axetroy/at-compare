@@ -9,13 +9,16 @@
   "keywords": [
     "angular",
     "form",
-    "directive"
+    "directive",
+    "compare",
+    "atCompare",
+    "at-compare"
   ],
   "moduleType": [
     "amd",
     "globals"
   ],
-  "homepage": "",
+  "homepage": "https://github.com/axetroy/at-compare",
   "ignore": [
     "**/.*",
     "node_modules",

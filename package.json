@@ -9,7 +9,10 @@
   "keywords": [
     "angular",
     "form",
-    "directive"
+    "directive",
+    "compare",
+    "atCompare",
+    "at-compare"
   ],
   "author": "axetroy",
   "license": "MIT"
