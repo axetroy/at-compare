@@ -1,4 +1,4 @@
-# Angular的promise指令
+# Angular的compare指令
 
 用于表单验证的指令，例如a>b，b<c...
 
