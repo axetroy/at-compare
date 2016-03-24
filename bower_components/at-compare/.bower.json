@@ -1,0 +1,43 @@
+{
+  "name": "at-compare",
+  "description": "form directive to compare with other form input in Angular",
+  "main": "at-compare.js",
+  "authors": [
+    "axetroy"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "form",
+    "directive",
+    "compare",
+    "atCompare",
+    "at-compare"
+  ],
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "homepage": "https://github.com/axetroy/at-compare",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.0"
+  },
+  "version": "0.1.4",
+  "_release": "0.1.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.4",
+    "commit": "25ad4c3d76d4ea476246a296d5105187a012c554"
+  },
+  "_source": "git://github.com/axetroy/at-compare.git",
+  "_target": "^0.1.4",
+  "_originalSource": "at-compare",
+  "_direct": true
+}
