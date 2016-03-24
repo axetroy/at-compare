@@ -73,10 +73,11 @@
   var supportSyntax = '["===","==","!==","!=",">=",">","<=","<"]';
 
   return angular.module('atCompare', [])
-    .directive('atCompare', ['$parse','$timeout','$log',function ($parse, $timeout, $log) {
+    .directive('atCompare', ['$parse', '$timeout', '$log', function ($parse, $timeout, $log) {
       return {
         restrict: 'A',
         require: 'ngModel',
+        // scope: false,
         link: function postLink($scope, $element, $attrs, ctrl) {
 
           $timeout(function () {
@@ -132,7 +133,7 @@
 
               // 如果是$scope下的变量
               if (!!v.sourceInScope) {
-                source = v.source = $parse(v.source)($scope);
+                source = $parse(v.source)($scope);
               } else {
                 source = v.source;
                 // 如果是数字
@@ -151,7 +152,7 @@
 
 
               if (!!v.targetInScope) {
-                target = v.target = $parse(v.target)($scope);
+                target = $parse(v.target)($scope);
               } else {
                 target = v.target;
                 if (/^\s*[\d\.?\d)]+\s*$/.test(v.target)) {
@@ -173,13 +174,22 @@
               }
 
               ctrl.$parsers.push(function (viewValue) {
-                ctrl.$setValidity(syntax, compareFn(source.$parsers ? source.$viewValue : source, target.$parsers ? target.$viewValue : target));
+
+                // 重新获取一次值，防止$scope下的变量发生变化，或是从异步获取得来的
+                if (!!v.sourceInScope) source = $parse(v.source)($scope);
+                if (!!v.targetInScope) target = $parse(v.target)($scope);
+
+                ctrl.$setValidity(syntax, compareFn((source && source.$parsers) ? source.$viewValue : source, target && target.$parsers ? target.$viewValue : target));
                 return viewValue;
               });
 
               if (angular.isObject(target) && angular.isArray(target.$parsers)) {
+
+                if (!!v.sourceInScope) source = $parse(v.source)($scope);
+                if (!!v.targetInScope) target = $parse(v.target)($scope);
+
                 target.$parsers.push(function (viewValue) {
-                  ctrl.$setValidity(syntax, compareFn(source.$parsers ? source.$viewValue : source, target.$parsers ? target.$viewValue : target));
+                  ctrl.$setValidity(syntax, compareFn((source && source.$parsers) ? source.$viewValue : source, (target && target.$parsers) ? target.$viewValue : target));
                   return viewValue;
                 });
               }
