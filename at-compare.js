@@ -5,20 +5,18 @@
   var define = g.define;
 
   if (typeof module !== "undefined" && typeof module === "object" && typeof module.exports === "object") {
-    module.exports = factory();
+    module.exports = factory(g.angular);
   }
   if (typeof define !== "undefined" && typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
     define(function () {
-      return factory();
+      return factory(g.angular);
     });
   }
   if (g.angular) {
-    factory();
+    factory(g.angular);
   }
-})(function (undefined) {
+})(function (angular) {
   'use strict';
-  var ｇ = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this;
-  var angular = ｇ.angular;
 
   /**
    * 匹配表达式的正则表达式
@@ -43,15 +41,23 @@
       return a != b;
     },
     '>=': function (a, b) {
+      a = a || 0;
+      b = b || 0;
       return parseFloat(a) >= parseFloat(b);
     },
     '>': function (a, b) {
+      a = a || 0;
+      b = b || 0;
       return parseFloat(a) > parseFloat(b);
     },
     '<=': function (a, b) {
+      a = a || 0;
+      b = b || 0;
       return parseFloat(a) <= parseFloat(b);
     },
     '<': function (a, b) {
+      a = a || 0;
+      b = b || 0;
       return parseFloat(a) < parseFloat(b);
     }
   };
@@ -63,11 +69,13 @@
   var supportSyntax = '["===","==","!==","!=",">=",">","<=","<"]';
 
   return angular.module('atCompare', [])
-    .directive('atCompare', function () {
+    .directive('atCompare', ['$timeout', '$log', function ($timeout, $log) {
       return {
         restrict: 'A',
         require: 'ngModel',
         link: function postLink($scope, $element, $attrs, ctrl) {
+
+          if (!ctrl) return;
 
           /**
            * 存放指令所含有的表达式
@@ -77,67 +85,68 @@
 
           /**
            * 当前input所处在的父级表单
-           * @type {*|any}
            */
           var form = $element.inheritedData("$formController");
 
-          $attrs.atCompare.split(';').forEach(function (v) {
-            var match,        // 匹配到的数组
-              obj = {};       // 临时哈希表
-            if (!v) return;
+          $timeout(function () {
+            $attrs.atCompare.split(';').forEach(function (v) {
+              var match,        // 匹配到的数组
+                obj = {};       // 临时哈希表
+              if (!v) return;
 
-            v = v.trim();
+              v = v.trim();
 
-            if (!EXPRESSION_REG.test(v)) {
-              console.error('Uncaught Syntax Error: 【%s】 is not the compare directive,please use %s', v, supportSyntax);
-              return;
-            }
+              if (!EXPRESSION_REG.test(v)) {
+                $log.error('Uncaught Syntax Error: [%s] is not the compare directive,please use %s || %s', v, supportSyntax, $element[0].outerHTML);
+                return;
+              }
 
-            match = EXPRESSION_REG.exec(v);
+              match = EXPRESSION_REG.exec(v);
 
-            /**
-             * 表达式a>b
-             */
-            obj.source = match[1];    // a
-            obj.mode = match[2];      // >
-            obj.target = match[3];    // b
-            list.push(obj);
-          });
-
-          angular.forEach(list, function (v) {
-
-            /**
-             * 表达式a>b
-             */
-            var source = form[v.source];      // a
-            var target = form[v.target];      // b
-
-            var compareFn = compare[v.mode];  // 对比函数
-
-            var syntax = v.source + v.mode + v.target;    // 当前语法
-
-            if (!compareFn) {
-              console.error('Uncaught Syntax Error: 【%s】 is not the compare directive,please use %s', syntax, supportSyntax);
-              return false;
-            }
-
-            /**
-             * 给当前指令的input
-             * $setValidity
-             */
-            ctrl.$parsers.push(function (viewValue) {
-              ctrl.$setValidity(syntax, compareFn(source.$viewValue, target.$viewValue));
-              return viewValue;
+              /**
+               * 表达式a>b
+               */
+              obj.source = match[1];    // a
+              obj.mode = match[2];      // >
+              obj.target = match[3];    // b
+              list.push(obj);
             });
 
-            target.$parsers.push(function (viewValue) {
-              ctrl.$setValidity(syntax, compareFn(source.$viewValue, target.$viewValue));
-              return viewValue;
-            });
+            angular.forEach(list, function (v) {
 
-          });
+              /**
+               * 表达式a>b
+               */
+              var source = form[v.source];      // a
+              var target = form[v.target];      // b
+
+              var compareFn = compare[v.mode];  // 对比函数
+
+              var syntax = v.source + v.mode + v.target;    // 当前语法
+
+              if (!compareFn) {
+                $log.error('Uncaught Syntax Error: [%s] is not the compare directive,please use %s || %s', syntax, supportSyntax, $element[0].outerHTML);
+                return false;
+              }
+
+              /**
+               * 给当前指令的input
+               * $setValidity
+               */
+              ctrl.$parsers.push(function (viewValue) {
+                ctrl.$setValidity(syntax, compareFn(source.$viewValue, target.$viewValue));
+                return viewValue;
+              });
+
+              target.$parsers.push(function (viewValue) {
+                ctrl.$setValidity(syntax, compareFn(source.$viewValue, target.$viewValue));
+                return viewValue;
+              });
+
+            });
+          }, 0);
 
         }
       };
-    });
+    }]);
 });
