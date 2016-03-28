@@ -22,7 +22,8 @@
    * 匹配表达式的正则表达式
    * @type {RegExp}
    */
-  var EXPRESSION_REG = /^([\w\$\.]+)\s*(in \$?scope)?\s*([\<\!\=\>]{1,3})\s*(['|"]?[\w\$\.]+['|"]?)\s*(in \$?scope)?$/;
+  // var EXPRESSION_REG = /^([\w\$\.]+)\s*(in \$?scope)?\s*([\<\!\=\>]{1,3})\s*(['|"]?[\w\$\.]+['|"]?)\s*(in \$?scope)?$/;
+  var EXPRESSION_REG = /^\s*(['|"]?[\w\$\.\-]+['|"]?)\s*(in\s*\$?scope)?\s*(\!\={1,2}|[<|>]\={0,2}|\={2,3})\s*(['|"]?[\w\$\.\-]+['|"]?)\s*(in\s*\$?scope)?[\s\;]*$/;
 
   /**
    * 不同语法执行的对比函数
@@ -77,7 +78,6 @@
       return {
         restrict: 'A',
         require: 'ngModel',
-        // scope: false,
         link: function postLink($scope, $element, $attrs, ctrl) {
 
           $timeout(function () {
@@ -178,18 +178,22 @@
                 // 重新获取一次值，防止$scope下的变量发生变化，或是从异步获取得来的
                 if (!!v.sourceInScope) source = $parse(v.source)($scope);
                 if (!!v.targetInScope) target = $parse(v.target)($scope);
+                var a = (source && source.$parsers) ? source.$viewValue : source;
+                var b = (target && target.$parsers) ? target.$viewValue : target;
+                ctrl.$setValidity(syntax, compareFn(a, b));
 
-                ctrl.$setValidity(syntax, compareFn((source && source.$parsers) ? source.$viewValue : source, target && target.$parsers ? target.$viewValue : target));
                 return viewValue;
               });
 
               if (angular.isObject(target) && angular.isArray(target.$parsers)) {
-
-                if (!!v.sourceInScope) source = $parse(v.source)($scope);
-                if (!!v.targetInScope) target = $parse(v.target)($scope);
-
                 target.$parsers.push(function (viewValue) {
-                  ctrl.$setValidity(syntax, compareFn((source && source.$parsers) ? source.$viewValue : source, (target && target.$parsers) ? target.$viewValue : target));
+
+                  if (!!v.sourceInScope) source = $parse(v.source)($scope);
+                  if (!!v.targetInScope) target = $parse(v.target)($scope);
+                  var a = (source && source.$parsers) ? source.$viewValue : source;
+                  var b = (target && target.$parsers) ? target.$viewValue : target;
+                  ctrl.$setValidity(syntax, compareFn(a, b));
+
                   return viewValue;
                 });
               }
