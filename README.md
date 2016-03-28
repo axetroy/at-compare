@@ -2,6 +2,10 @@
 
 用于表单验证的指令，例如a>b，b<c...
 
+# demo
+
+[demo](http://www.burningall.com/at-compare/)
+
 # 安装
 
 ```bash
@@ -12,7 +16,7 @@ bower install at-compare --save
 
 依赖于`angular`
 
-引入模块`ngAnimate`和`atPromise`
+引入模块`atPromise`
 
 ```js
 angular
