@@ -1,5 +1,7 @@
 # Angular的compare指令
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/axetroy/at-compare.svg)](https://greenkeeper.io/)
+
 用于表单验证的指令，例如a>b，b<c...
 
 # demo
