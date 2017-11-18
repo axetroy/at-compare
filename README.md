@@ -6,7 +6,7 @@
 
 # demo
 
-[demo](http://www.burningall.com/at-compare/)
+[demo](http://axetroy.github.io/at-compare/)
 
 # 安装
 
